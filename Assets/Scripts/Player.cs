@@ -32,8 +32,19 @@ public class Player : MonoBehaviour
             spriteRenderer.flipX = false;
         }
 
-        transform.position += velocity * Time.deltaTime;
+        float newX = transform.position.x + velocity.x * Time.deltaTime;
+        float newY = transform.position.y + velocity.y * Time.deltaTime;
 
-        Camera.main.transform.position = new Vector3(transform.position.x, transform.position.y, -10);
+        if (Physics2D.OverlapPoint(new Vector2(newX, transform.position.y), LayerMask.GetMask("Island")))
+        {
+            velocity.x = 0;
+        }
+
+        if (Physics2D.OverlapPoint(new Vector2(transform.position.x, newY), LayerMask.GetMask("Island")))
+        {
+            velocity.y = 0;
+        }
+
+        transform.position += velocity * Time.deltaTime;
     }
 }

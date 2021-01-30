@@ -10,7 +10,7 @@ public class IslandGenerator : MonoBehaviour
 
     private void Start()
     {
-        List<Vector3> islandPositions = GenerateIslandChain(Vector3.zero, Vector2.up, 2f, 6f, 120, 0.1f, 40, 70);
+        List<Vector3> islandPositions = GenerateIslandChain(Vector3.zero, Vector2.up, 2f, 6f, 120, 0.4f, 7, 20);
         foreach (Vector3 pos in islandPositions)
         {
             Instantiate(islandPrefab, pos, Quaternion.Euler(0, 0, Random.Range(0, 360)));

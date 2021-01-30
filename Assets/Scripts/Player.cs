@@ -8,11 +8,16 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float movementSpeed = 5.0f;
 
+    [SerializeField]
+    private float steeringSpeed = 1.0f;
+
+    private float rotation = 0f;
+
     private SpriteRenderer spriteRenderer;
 
     private void Start()
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
 
     // Update is called once per frame
@@ -21,16 +26,17 @@ public class Player : MonoBehaviour
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
 
-        Vector3 velocity = new Vector3(horizontal, vertical, 0) * movementSpeed;
+        if (vertical == 0)
+        {
+            Vector3 newCameraPos = Mathf.Sin(Time.time) * (Vector3.up + Vector3.right) * 0.01f;
+            newCameraPos.z = -10;
+            Camera.main.transform.localPosition = newCameraPos;
+        }
 
-        if (velocity.x < 0)
-        {
-            spriteRenderer.flipX = true;
-        }
-        else if (velocity.x > 0)
-        {
-            spriteRenderer.flipX = false;
-        }
+        rotation -= horizontal * steeringSpeed * Time.deltaTime;
+        spriteRenderer.transform.rotation = Quaternion.Euler(0, 0, rotation);
+
+        Vector3 velocity = spriteRenderer.transform.up * vertical * movementSpeed;
 
         float newX = transform.position.x + velocity.x * Time.deltaTime;
         float newY = transform.position.y + velocity.y * Time.deltaTime;

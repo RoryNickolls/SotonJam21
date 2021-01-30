@@ -26,6 +26,12 @@ public class Player : MonoBehaviour
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
 
+        if (vertical == 0)
+        {
+            Vector3 newCameraPos = Mathf.Sin(Time.time) * (Vector3.up + Vector3.right) * 0.01f;
+            newCameraPos.z = -10;
+            Camera.main.transform.localPosition = newCameraPos;
+        }
 
         rotation -= horizontal * steeringSpeed * Time.deltaTime;
         spriteRenderer.transform.rotation = Quaternion.Euler(0, 0, rotation);

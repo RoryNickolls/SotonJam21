@@ -9,16 +9,16 @@ public class IslandArrows : MonoBehaviour
     [SerializeField]
     private int maxArrows = 3;
 
-    private Image[] arrows;
-
     private float radius;
     private Player player;
+
+    private List<IslandArrow> activeArrows;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        arrows = GetComponentsInChildren<Image>();
+        activeArrows = new List<IslandArrow>(GetComponentsInChildren<IslandArrow>());
 
         float height = 2f * Camera.main.orthographicSize;
         float width = height * Camera.main.aspect;
@@ -30,10 +30,10 @@ public class IslandArrows : MonoBehaviour
         {
             radius = height;
         }
-        radius *= 2f;
 
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
     }
+
 
     // Update is called once per frame
     void Update()
@@ -41,9 +41,9 @@ public class IslandArrows : MonoBehaviour
         Vector3 playerPos = player.transform.position;
         Collider2D[] hits = Physics2D.OverlapCircleAll(playerPos, radius, LayerMask.GetMask("Island"));
 
-        List<GameObject> pointingAt = new List<GameObject>();
-        int count = 0;
-        for (int i = 0; i < hits.Length && count < arrows.Length; i++)
+        // Find nearby islands
+        List<GameObject> nearbyIslands = new List<GameObject>();
+        for (int i = 0; i < hits.Length; i++)
         {
             Collider2D col = hits[i];
 
@@ -55,22 +55,33 @@ public class IslandArrows : MonoBehaviour
             }
             else
             {
-                GameObject island = col.gameObject;
-                pointingAt.Add(island);
-
-
-                // Vector2 screenPos = new Vector2(viewportPos.x - 0.5f, viewportPos.y - 0.5f) * 2;
-                // float max = Mathf.Max(Mathf.Abs(viewportPos.x), Mathf.Abs(viewportPos.y));
-                // screenPos = (screenPos / (max * 2)) + new Vector2(0.5f, 0.5f);
-                // Image arrow = arrows[i];
-                // arrow.rectTransform.rotation = Quaternion.Euler(0, 0, Vector3.Angle(Vector3.up, (col.transform.position - playerPos)));
-                // arrow.rectTransform.position = screenPos;
-
-                Vector2 screenPos = Camera.main.WorldToScreenPoint(col.transform.position);
-                screenPos = Vector2.ClampMagnitude(screenPos, Camera.main.orthographicSize);
-                count++;
+                nearbyIslands.Add(col.gameObject);
             }
+        }
 
+        // Deactivate arrows for islands that are no longer nearby
+        foreach (IslandArrow arrow in activeArrows)
+        {
+            // Island is not nearby anymore so deactivate arrow
+            if (arrow.Target != null && !nearbyIslands.Contains(arrow.Target.gameObject))
+            {
+                arrow.Target = null;
+            }
+        }
+
+        for (int i = 0; i < nearbyIslands.Count; i++)
+        {
+            GameObject island = nearbyIslands[i];
+            if (i < activeArrows.Count)
+            {
+                activeArrows[i].Target = island.transform;
+            }
+            else
+            {
+                IslandArrow newArrow = Instantiate(activeArrows[i - 1], transform);
+                newArrow.Target = island.transform;
+                activeArrows.Add(newArrow);
+            }
         }
 
     }

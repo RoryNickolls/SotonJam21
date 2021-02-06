@@ -10,7 +10,7 @@ public class IslandArrows : MonoBehaviour
     private int maxArrows = 3;
 
     private float radius;
-    private Player player;
+    private PlayerShip player;
 
     private List<IslandArrow> activeArrows;
 
@@ -31,7 +31,7 @@ public class IslandArrows : MonoBehaviour
             radius = height;
         }
 
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerShip>();
     }
 
 

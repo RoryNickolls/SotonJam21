@@ -7,11 +7,30 @@ public abstract class Ship : MonoBehaviour
     [SerializeField] private float hullHealth;
     [SerializeField] private float fireRate;
 
-    [SerializeField] private float movementSpeed;
-    [SerializeField] private float turningSpeed;
+    [SerializeField] protected float movementSpeed;
+    [SerializeField] protected float turningSpeed;
 
-    protected Vector2 velocity;
+    protected Vector3 velocity;
+    protected float steering = 0f;
+    private float rotation = 0f;
+
+    protected SpriteRenderer spriteRenderer;
+
+    public virtual void Start()
+    {
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+    }
+
+    public virtual void Update()
+    {
+        Move();
+    }
 
 
-    // INSERT BEHAVIOUR HERE
+    public virtual void Move()
+    {
+        rotation -= steering * Time.deltaTime;
+        spriteRenderer.transform.rotation = Quaternion.Euler(0, 0, rotation);
+        transform.position += velocity * Time.deltaTime;
+    }
 }

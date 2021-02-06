@@ -6,12 +6,10 @@ public class IslandArrow : MonoBehaviour
     [SerializeField] private Transform target;
 
     private RectTransform rectTransform;
-    private Player player;
 
     private void Start()
     {
         rectTransform = GetComponent<RectTransform>();
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
     }
 
     private void Update()

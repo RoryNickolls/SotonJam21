@@ -30,11 +30,14 @@ public class EnemyShip : Ship
         int maxIslands = 5;
         Vector3 averageDirection = Vector3.zero;
         int count = 0;
-        for (int i = 0; i < maxIslands && i < nearbyIslands.Count; i++, count++)
+        for (int i = 0; i < maxIslands && i < nearbyIslands.Count; i++)
         {
             Vector3 diff = (nearbyIslands[i].transform.position - transform.position);
-            Vector3 dir = diff.normalized * diff.sqrMagnitude;
-            averageDirection += dir;
+            if (diff.sqrMagnitude > 1)
+            {
+                averageDirection += diff.normalized;
+                count++;
+            }
         }
         averageDirection /= count;
 

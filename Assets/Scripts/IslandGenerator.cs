@@ -8,12 +8,40 @@ public class IslandGenerator : MonoBehaviour
     [SerializeField]
     private GameObject islandPrefab;
 
+    [SerializeField] private GameObject suppliesPrefab;
+    [SerializeField] private GameObject landmarkPrefab;
+
+    [SerializeField] private GameObject storyPrefab;
+
+    [SerializeField] private float specialIslandChance = 0.4f;
+    [SerializeField] private float supplyIslandChance = 0.8f;
+    [SerializeField] private float landmarkIslandChance = 0.1f;
+    [SerializeField] private float storyIslandChance = 0.1f;
+
     private void Start()
     {
-        List<Vector3> islandPositions = GenerateIslandChain(Vector3.zero, Vector2.up, 2f, 6f, 120, 0.1f, 40, 70);
+        List<Vector3> islandPositions = GenerateIslandChain(Vector3.zero, Vector2.up, 2f, 4f, 120, 0.4f, 7, 20);
         foreach (Vector3 pos in islandPositions)
         {
-            Instantiate(islandPrefab, pos, Quaternion.Euler(0, 0, Random.Range(0, 360)));
+            GameObject island = Instantiate(islandPrefab, pos, Quaternion.Euler(0, 0, Random.Range(0, 360)));
+
+            float chance = Random.Range(0f, 1f);
+            if (chance <= specialIslandChance)
+            {
+                chance = Random.Range(0f, 1f);
+                if (chance <= supplyIslandChance)
+                {
+                    Instantiate(suppliesPrefab, island.transform);
+                }
+                else if (chance <= supplyIslandChance + landmarkIslandChance)
+                {
+                    Instantiate(landmarkPrefab, island.transform);
+                }
+                else if (chance <= supplyIslandChance + landmarkIslandChance + storyIslandChance)
+                {
+                    Instantiate(storyPrefab, island.transform);
+                }
+            }
         }
     }
 
@@ -41,7 +69,7 @@ public class IslandGenerator : MonoBehaviour
             if (chance < chainChance)
             {
                 Vector2 newChainDir = Quaternion.Euler(0, 0, Random.Range(60, 120) * Mathf.Sign(Random.Range(-1, 1))) * islandsDir;
-                List<Vector3> newChain = GenerateIslandChain(lastIslandPos, newChainDir, minHopDist, maxHopDist, maxHopAngle, chainChance / 2, Mathf.Max(1, minChainLength / 2), Mathf.Max(1, maxChainLength / 2));
+                List<Vector3> newChain = GenerateIslandChain(lastIslandPos, newChainDir, minHopDist, maxHopDist, maxHopAngle, chainChance / 2, (int)Mathf.Max(1f, minChainLength * 0.75f), (int)Mathf.Max(1f, maxChainLength * 0.75f));
                 positions.AddRange(newChain);
             }
         }

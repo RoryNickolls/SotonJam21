@@ -18,9 +18,13 @@ public class PlayerShip : Ship
         }
 
         steering = horizontal * turningSpeed;
-
         velocity = spriteRenderer.transform.up * vertical * movementSpeed;
 
+        base.Update();
+    }
+
+    public override void Move()
+    {
         float newX = transform.position.x + velocity.x * Time.deltaTime;
         float newY = transform.position.y + velocity.y * Time.deltaTime;
 
@@ -33,6 +37,6 @@ public class PlayerShip : Ship
         {
             velocity.y = 0;
         }
-        base.Update();
+        base.Move();
     }
 }

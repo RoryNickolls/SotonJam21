@@ -6,6 +6,18 @@ using System.Linq;
 public class EnemyShip : Ship
 {
 
+    [SerializeField] [Range(1, 15)] private float playerSpotRange = 7.5f;
+
+    private PlayerShip playerShip;
+
+    private bool isChasingPlayer;
+
+    public override void Start()
+    {
+        base.Start();
+        playerShip = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerShip>();
+    }
+
     public override void Update()
     {
         List<Collider2D> nearbyIslands = new List<Collider2D>(Physics2D.OverlapCircleAll(transform.position, 10f));
@@ -40,6 +52,13 @@ public class EnemyShip : Ship
             }
         }
         averageDirection /= count;
+
+        Vector3 playerDir = (playerShip.transform.position - transform.position);
+        isChasingPlayer = playerDir.magnitude < playerSpotRange;
+        if (isChasingPlayer)
+        {
+            averageDirection = averageDirection / 2 + playerDir.normalized;
+        }
 
         velocity = spriteRenderer.transform.up * movementSpeed;
 
